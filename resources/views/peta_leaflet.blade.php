@@ -22,6 +22,11 @@
     </div>
 
     <script>
+        var provin = new L.LayerGroup();
+        var sungai = new L.LayerGroup();
+        var prov = new L.LayerGroup();
+        var faskes = new L.LayerGroup();
+
         var map = L.map('map', {
             center: [-1.7912604466772375, 116.42311966554416],
             zoom: 5,
@@ -60,12 +65,19 @@
             'Google Roads': GoogleRoads
         };
 
-
+        var groupedOverLayers = {
+            "Peta Dasar": {
+                'Ibu Kota Provinsi': prov,
+                'Jaringan sungai': sungai,
+                'Provinsi': provin
+            },
+            "Peta Khusus": {
+                'Fasilitas Kesehatan': faskes
+            }
+        };
 
         var overlayLayers = {}
-        L.control.layers(baseLayers, overlayLayers, {
-            collapsed: true
-        }).addTo(map);
+        L.control.groupedLayers(baseLayers, groupedOverLayers).addTo(map);
 
 
         var osmUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
@@ -166,6 +178,130 @@
             position: "bottomleft"
         });
 
-        Esri_NatGeoWorldMap.addTo(map);
+        $.getJSON("{{ asset('provinsi.geojson') }}", function(data) {
+            var ratIcon = L.icon({
+                iconUrl: "{{ asset('marker-1.png') }}",
+                iconSize: [12, 10]
+            });
+
+            L.geoJson(data, {
+                pointToLayer: function(feature, latlng) {
+                    var marker = L.marker(latlng, {
+                        icon: ratIcon
+                    });
+                    marker.bindPopup(feature.properties.CITY_NAME);
+                    return marker;
+                }
+            }).addTo(prov);
+        });
+
+        // Memuat file GeoJSON
+        $.getJSON("{{ asset('puskesmas.geojson') }}", function(data) {
+            // Membuat ikon custom untuk marker
+            var ratIcon = L.icon({
+                iconUrl: "{{ asset('marker-2.png') }}",
+                iconSize: [12, 10]
+            });
+
+            // Menambahkan GeoJSON ke peta dengan ikon custom
+            L.geoJson(data, {
+                pointToLayer: function(feature, latlng) {
+                    var marker = L.marker(latlng, {
+                        icon: ratIcon
+                    });
+                    marker.bindPopup(feature.properties.NAMOBJ); // Menampilkan popup
+                    return marker;
+                }
+            }).addTo(faskes);
+        });
+
+        $.getJSON("{{ asset('rsu.geojson') }}", function(data) {
+            // Membuat ikon custom untuk marker
+            var ratIcon = L.icon({
+                iconUrl: "{{ asset('marker-3.png') }}",
+                iconSize: [12, 10]
+            });
+
+            // Menambahkan GeoJSON ke peta dengan ikon custom
+            L.geoJson(data, {
+                pointToLayer: function(feature, latlng) {
+                    var marker = L.marker(latlng, {
+                        icon: ratIcon
+                    });
+                    marker.bindPopup(feature.properties.NAMOBJ); // Menampilkan popup
+                    return marker;
+                }
+            }).addTo(faskes);
+        });
+
+        $.getJSON("{{ asset('sungai.geojson') }}", function(data) {
+            L.geoJson(data, {
+                style: function(feature) {
+                    let color;
+                    const kode = feature.properties.kode;
+
+                    if (kode < 2) {
+                        color = "#f2051d";
+                    } else if (kode > 0) {
+                        color = "#f2051d";
+                    } else {
+                        color = "#f2051d"; // No data
+                    }
+
+                    return {
+                        color: "#999",
+                        weight: 5,
+                        fillOpacity: 0.8,
+                        color: color,
+                    };
+                },
+                onEachFeature: function(feature, layer) {
+                    layer.bindPopup();
+                },
+            }).addTo(sungai);
+        });
+
+        $.getJSON("{{ asset('prov_polygon.geojson') }}", function(data) {
+            L.geoJson(data, {
+                style: function(feature) {
+                    let fillColor;
+                    const kode = feature.properties.kode;
+
+                    if (kode > 21) fillColor = "#006837";
+                    else if (kode > 20) fillColor = "#fec44f";
+                    else if (kode > 19) fillColor = "#c2e699";
+                    else if (kode > 18) fillColor = "#fee0d2";
+                    else if (kode > 17) fillColor = "#756bb1";
+                    else if (kode > 16) fillColor = "#8c510a";
+                    else if (kode > 15) fillColor = "#01665e";
+                    else if (kode > 14) fillColor = "#e41a1c";
+                    else if (kode > 13) fillColor = "#636363";
+                    else if (kode > 12) fillColor = "#762a83";
+                    else if (kode > 11) fillColor = "#1b7837";
+                    else if (kode > 10) fillColor = "#d53e4f";
+                    else if (kode > 9) fillColor = "#67001f";
+                    else if (kode > 8) fillColor = "#c994c7";
+                    else if (kode > 7) fillColor = "#fdbb84";
+                    else if (kode > 6) fillColor = "#dd1c77";
+                    else if (kode > 5) fillColor = "#3182bd";
+                    else if (kode > 4) fillColor = "#f03b20";
+                    else if (kode > 3) fillColor = "#31a354";
+                    else if (kode > 2) fillColor = "#78c679";
+                    else if (kode > 1) fillColor = "#c2e699";
+                    else if (kode > 0) fillColor = "#ffffcc";
+                    else fillColor = "#f7f7f7"; // No data
+
+                    return {
+                        color: "#999",
+                        weight: 1,
+                        fillColor: fillColor,
+                        fillOpacity: 0.6,
+                    };
+                },
+                onEachFeature: function(feature, layer) {
+                    layer.bindPopup(feature.properties.PROV);
+                },
+            }).addTo(provin);
+        });
     </script>
 @endsection

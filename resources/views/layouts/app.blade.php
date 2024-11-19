@@ -26,6 +26,7 @@
 
 
     {{-- js --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="{{ asset('leaflet.groupedlayercontrol.js') }}"></script>
@@ -63,7 +64,7 @@
     <!-- REQUIRED SCRIPTS -->
     <!-- jQuery -->
     <script src="{{ asset('template/plugins/jquery/jquery.min.js') }}">
-        < /.script> <!--Bootstrap 4-- > <
+        < /script> <!--Bootstrap 4-- > <
         script src = "{{ asset('template/plugins/bootstrap/js/bootstrap.bundle.min.js') }}" > <
             /> <!--AdminLTE App-- > <
         script src = "{{ asset('template/dist/js/adminlte.min.js') }}" >
