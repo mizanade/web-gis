@@ -8,6 +8,6 @@ class Map extends Controller
 {
     public function index()
     {
-        return view('peta_leaflet');
+        return view('maps.index');
     }
 }

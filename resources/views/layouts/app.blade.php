@@ -2,17 +2,36 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Web GIS</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback" />
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="{{ asset('template/plugins/fontawesome-free/css/all.min.css') }}" />
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{{ asset('template/dist/css/adminlte.min.css') }}" />
+    <title>Klassy Cafe - Restaurant HTML Template</title>
+    <!--
+    
+TemplateMo 558 Klassy Cafe
+
+https://templatemo.com/tm-558-klassy-cafe
+
+-->
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('template-resto/assets/css/bootstrap.min.css') }}">
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('template-resto/assets/css/font-awesome.css') }}">
+
+    <link rel="stylesheet" href="{{ asset('template-resto/assets/css/templatemo-klassy-cafe.css') }}">
+
+    <link rel="stylesheet" href="{{ asset('template-resto/assets/css/owl-carousel.css') }}">
+
+    <link rel="stylesheet" href="{{ asset('template-resto/assets/css/lightbox.css') }}">
+
+
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
@@ -38,8 +57,15 @@
     <script src="{{ asset('Leaflet.Coordinates-0.1.5.min.js') }}"></script>
 </head>
 
-<body class="hold-transition layout-top-nav">
-    <div class="wrapper">
+<body>
+    <div id="preloader">
+        <div class="jumper">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <div>
         <!-- Navbar -->
         @include('layouts.navbar')
         <!-- /.navbar -->
@@ -50,27 +76,50 @@
 
         <!-- Main content -->
         <div class="content">
-            <div class="container">
-                @yield('content')
-            </div>
+            @yield('content')
         </div>
         <!-- /.content -->
 
         <!-- Main Footer -->
         @include('layouts.footer')
     </div>
-    <!-- ./wrapper -->
 
-    <!-- REQUIRED SCRIPTS -->
     <!-- jQuery -->
-    <script src="{{ asset('template/plugins/jquery/jquery.min.js') }}">
-        < /script> <!--Bootstrap 4-- > <
-        script src = "{{ asset('template/plugins/bootstrap/js/bootstrap.bundle.min.js') }}" > <
-            /> <!--AdminLTE App-- > <
-        script src = "{{ asset('template/dist/js/adminlte.min.js') }}" >
-            <
-            /> < /
-        body >
+    <script src="{{ asset('template-resto/assets/js/jquery-2.1.0.min.js') }}"></script>
 
-            <
-            /html>
+    <!-- Bootstrap -->
+    <script src="{{ asset('template-resto/assets/js/popper.js') }}"></script>
+    <script src="{{ asset('template-resto/assets/js/bootstrap.min.js') }}"></script>
+
+    <!-- Plugins -->
+    <script src="{{ asset('template-resto/assets/js/owl-carousel.js') }}"></script>
+    <script src="{{ asset('template-resto/assets/js/accordions.js') }}"></script>
+    <script src="{{ asset('template-resto/assets/js/datepicker.js') }}"></script>
+    <script src="{{ asset('template-resto/assets/js/scrollreveal.min.js') }}"></script>
+    <script src="{{ asset('template-resto/assets/js/waypoints.min.js') }}"></script>
+    <script src="{{ asset('template-resto/assets/js/jquery.counterup.min.js') }}"></script>
+    <script src="{{ asset('template-resto/assets/js/imgfix.min.js') }}"></script>
+    <script src="{{ asset('template-resto/assets/js/slick.js') }}"></script>
+    <script src="{{ asset('template-resto/assets/js/lightbox.js') }}"></script>
+    <script src="{{ asset('template-resto/assets/js/isotope.js') }}"></script>
+
+    <!-- Global Init -->
+    <script src="{{ asset('template-resto/assets/js/custom.js') }}"></script>
+    <script>
+        $(function() {
+            var selectedClass = "";
+            $("p").click(function() {
+                selectedClass = $(this).attr("data-rel");
+                $("#portfolio").fadeTo(50, 0.1);
+                $("#portfolio div").not("." + selectedClass).fadeOut();
+                setTimeout(function() {
+                    $("." + selectedClass).fadeIn();
+                    $("#portfolio").fadeTo(50, 1);
+                }, 500);
+            });
+        });
+    </script>
+
+</body>
+
+</html>
