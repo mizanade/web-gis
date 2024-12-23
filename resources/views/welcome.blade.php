@@ -132,7 +132,7 @@
                             <div class='info'>
                                 <h1 class='title'>Telur Dadar</h1>
                                 <p class='description'>Telur dadar adalah telur yang dikocok dengan bumbu dan digoreng
-                                    hingga matang, sering disajikan sebagai lauk pendamping nasi.</p>
+                                    hingga matang.</p>
                                 <div class="main-text-button">
                                 </div>
                             </div>
@@ -176,182 +176,266 @@
                     </div>
                 </div>
             </div>
-            <div class="content"
-                style="
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f4f4f9;
-    padding: 20px;
-">
+
+            <div class="content" style="display: flex; justify-content: center; align-items: center;">
                 <div id="map"
-                    style="
-        height: 750px;
-        width: 100%;
-        max-width: 1200px;
-        border-radius: 15px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        overflow: hidden;
-        z-index: 0;
-    ">
+                    style="height: 750px; width: 100%; max-width: 1200px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); overflow: hidden; z-index: 0;">
                 </div>
             </div>
 
+
             <script>
                 var provin = new L.LayerGroup();
-                var sungai = new L.LayerGroup();
-                var prov = new L.LayerGroup();
-                var faskes = new L.LayerGroup();
                 var warteg = new L.LayerGroup();
+                var ciputat = new L.LayerGroup();
 
-                var map = L.map('map', {
+                var map = L.map("map", {
                     center: [-6.3035, 106.7644], // Koordinat Ciputat Timur
                     zoom: 15, // Level zoom cukup dekat untuk menampilkan Ciputat Timur
                     zoomControl: false,
-                    layers: []
+                    layers: [],
                 });
-
                 var GoogleSatelliteHybrid = L.tileLayer(
-                    'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                    "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", {
                         maxZoom: 22,
-                        attribution: 'Latihan Web GIS'
+                        attribution: "Warteg Ciputat",
                     }
                 ).addTo(map);
 
                 var Esri_NatGeoWorldMap = L.tileLayer(
-                    'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
-                        attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
-                        maxZoom: 16
+                    "https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}", {
+                        attribution: "Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC",
+                        maxZoom: 16,
                     }
                 );
 
                 var GoogleMaps = new L.TileLayer(
-                    'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                    "https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
                         opacity: 1.0,
-                        attribution: 'Latihan Web GIS'
+                        attribution: "Latihan Web GIS",
                     }
                 );
 
                 var GoogleRoads = new L.TileLayer(
-                    'https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}', {
+                    "https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}", {
                         opacity: 1.0,
-                        attribution: 'Latihan Web GIS'
+                        attribution: "Latihan Web GIS",
                     }
                 );
 
                 var baseLayers = {
-                    'Google Satellite Hybrid': GoogleSatelliteHybrid,
-                    'Esri NatGeo World Map': Esri_NatGeoWorldMap,
-                    'Google Maps': GoogleMaps,
-                    'Google Roads': GoogleRoads
+                    "Google Satellite Hybrid": GoogleSatelliteHybrid,
+                    "Esri NatGeo World Map": Esri_NatGeoWorldMap,
+                    "Google Maps": GoogleMaps,
+                    "Google Roads": GoogleRoads,
                 };
 
                 var groupedOverLayers = {
                     "Peta Dasar": {
-                        'Ibu Kota Provinsi': prov,
-                        'Jaringan sungai': sungai,
-                        'Provinsi': provin,
-                        'Warteg': warteg
+                        Provinsi: provin,
+                        "Ciputat Timur": ciputat,
                     },
-                    "Peta Khusus": {
-                        'Fasilitas Kesehatan': faskes
-                    }
                 };
 
+                var overlayLayers = {};
                 L.control.groupedLayers(baseLayers, groupedOverLayers).addTo(map);
 
-                var osmUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-                var osmAttrib = 'Map data &copy; OpenStreetMap contributors';
+                var osmUrl =
+                    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+                var osmAttrib = "Map data &copy; OpenStreetMap contributors";
 
+                // Layer tile untuk peta mini
                 var osm2 = new L.TileLayer(osmUrl, {
                     minZoom: 0,
                     maxZoom: 13,
-                    attribution: osmAttrib
+                    attribution: osmAttrib,
                 });
 
+                // Opsi tampilan untuk rect dalam MiniMap
+                var rect1 = {
+                    color: "#ff1100",
+                    weight: 3,
+                };
+                var rect2 = {
+                    color: "#0000AA",
+                    weight: 1,
+                    opacity: 0,
+                    fillOpacity: 0,
+                };
+
+                // Inisialisasi MiniMap dengan opsi yang sudah ditentukan
                 var miniMap = new L.Control.MiniMap(osm2, {
                     toggleDisplay: true,
                     position: "bottomright",
-                    aimingRectOptions: {
-                        color: "#ff1100",
-                        weight: 3
-                    },
-                    shadowRectOptions: {
-                        color: "#0000AA",
-                        weight: 1,
-                        opacity: 0,
-                        fillOpacity: 0
-                    }
+                    aimingRectOptions: rect1,
+                    shadowRectOptions: rect2,
                 }).addTo(map);
 
                 L.Control.geocoder({
                     position: "topleft",
-                    collapsed: true
+                    collapsed: true,
                 }).addTo(map);
 
-                var locateControl = L.control.locate({
-                    position: "topleft",
-                    drawCircle: true,
-                    follow: true,
-                    setView: true,
-                    keepCurrentZoomLevel: true,
-                    markerStyle: {
-                        weight: 1,
-                        opacity: 0.8,
-                        fillOpacity: 0.8
-                    },
-                    circleStyle: {
-                        weight: 1,
-                        clickable: false
-                    },
-                    icon: "fa fa-location-arrow",
-                    metric: false,
-                    strings: {
-                        title: "My location",
-                        popup: "You are within {distance} {unit} from this point",
-                        outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
-                    },
-                    locateOptions: {
-                        maxZoom: 18,
-                        watch: true,
-                        enableHighAccuracy: true,
-                        maximumAge: 10000,
-                        timeout: 10000
-                    }
-                }).addTo(map);
+                //menambahkan koordinat
+                var locateControl = L.control
+                    .locate({
+                        position: "topleft",
+                        drawCircle: true,
+                        follow: true,
+                        setView: true,
+                        keepCurrentZoomLevel: true,
+                        markerStyle: {
+                            weight: 1,
+                            opacity: 0.8,
+                            fillOpacity: 0.8,
+                        },
+                        circleStyle: {
+                            weight: 1,
+                            clickable: false,
+                        },
+                        icon: "fa fa-location-arrow",
+                        metric: false,
+                        strings: {
+                            title: "My location",
+                            popup: "You are within {distance} {unit} from this point",
+                            outsideMapBoundsMsg: "You seem located outside the boundaries of the map",
+                        },
+                        locateOptions: {
+                            maxZoom: 18,
+                            watch: true,
+                            enableHighAccuracy: true,
+                            maximumAge: 10000,
+                            timeout: 10000,
+                        },
+                    })
+                    .addTo(map);
 
                 var zoom_bar = new L.Control.ZoomBar({
-                    position: 'topleft'
+                    position: "topleft",
                 }).addTo(map);
 
-                L.control.coordinates({
-                    position: "bottomleft",
-                    decimals: 2,
-                    decimalSeperator: ",",
-                    labelTemplateLat: "Latitude: {y}",
-                    labelTemplateLng: "Longitude: {x}"
-                }).addTo(map);
-
-                L.control.scale({
-                    metric: true,
-                    position: "bottomleft"
-                }).addTo(map);
+                L.control
+                    .coordinates({
+                        position: "bottomleft",
+                        decimals: 2,
+                        decimalSeperator: ",",
+                        labelTemplateLat: "Latitude: {y}",
+                        labelTemplateLng: "Longitude: {x}",
+                    })
+                    .addTo(map);
+                /* scala */
+                L.control
+                    .scale({
+                        metric: true,
+                        position: "bottomleft",
+                    })
+                    .addTo(map);
 
                 var north = L.control({
                     position: "bottomleft"
                 });
+
                 north.onAdd = function(map) {
                     var div = L.DomUtil.create("div", "info legend");
-                    div.innerHTML = '<img src="{{ asset('cardinal-direction.png') }}" style="width:200px;">';
+                    div.innerHTML = '<img src="' + window.location.origin +
+                        '/cardinal-direction.png" style="width:200px; position:absolute; bottom:80px; left:10px; z-index:9999;">';
                     return div;
                 };
+
                 north.addTo(map);
+
+
+                $.getJSON("{{ asset('prov_polygon.geojson') }}", function(data) {
+                    L.geoJson(data, {
+                        style: function(feature) {
+                            let fillColor;
+                            const kode = feature.properties.kode;
+
+                            if (kode > 21) fillColor = "#006837";
+                            else if (kode > 20) fillColor = "#fec44f";
+                            else if (kode > 19) fillColor = "#c2e699";
+                            else if (kode > 18) fillColor = "#fee0d2";
+                            else if (kode > 17) fillColor = "#756bb1";
+                            else if (kode > 16) fillColor = "#8c510a";
+                            else if (kode > 15) fillColor = "#01665e";
+                            else if (kode > 14) fillColor = "#e41a1c";
+                            else if (kode > 13) fillColor = "#636363";
+                            else if (kode > 12) fillColor = "#762a83";
+                            else if (kode > 11) fillColor = "#1b7837";
+                            else if (kode > 10) fillColor = "#d53e4f";
+                            else if (kode > 9) fillColor = "#67001f";
+                            else if (kode > 8) fillColor = "#c994c7";
+                            else if (kode > 7) fillColor = "#fdbb84";
+                            else if (kode > 6) fillColor = "#dd1c77";
+                            else if (kode > 5) fillColor = "#3182bd";
+                            else if (kode > 4) fillColor = "#f03b20";
+                            else if (kode > 3) fillColor = "#31a354";
+                            else if (kode > 2) fillColor = "#78c679";
+                            else if (kode > 1) fillColor = "#c2e699";
+                            else if (kode > 0) fillColor = "#ffffcc";
+                            else fillColor = "#f7f7f7"; // No data
+
+                            return {
+                                color: "#999",
+                                weight: 1,
+                                fillColor: fillColor,
+                                fillOpacity: 0.6,
+                            };
+                        },
+                        onEachFeature: function(feature, layer) {
+                            layer.bindPopup(feature.properties.PROV);
+                        },
+                    }).addTo(provin);
+                });
+
+                $.getJSON("{{ asset('ciputat_timur_polygon.geojson') }}", function(data) {
+                    L.geoJson(data, {
+                        style: function(feature) {
+                            let fillColor;
+                            const kode = feature.properties.kode;
+
+                            if (kode > 21) fillColor = "#006837";
+                            else if (kode > 20) fillColor = "#fec44f";
+                            else if (kode > 19) fillColor = "#c2e699";
+                            else if (kode > 18) fillColor = "#fee0d2";
+                            else if (kode > 17) fillColor = "#756bb1";
+                            else if (kode > 16) fillColor = "#8c510a";
+                            else if (kode > 15) fillColor = "#01665e";
+                            else if (kode > 14) fillColor = "#e41a1c";
+                            else if (kode > 13) fillColor = "#636363";
+                            else if (kode > 12) fillColor = "#762a83";
+                            else if (kode > 11) fillColor = "#1b7837";
+                            else if (kode > 10) fillColor = "#d53e4f";
+                            else if (kode > 9) fillColor = "#67001f";
+                            else if (kode > 8) fillColor = "#c994c7";
+                            else if (kode > 7) fillColor = "#fdbb84";
+                            else if (kode > 6) fillColor = "#dd1c77";
+                            else if (kode > 5) fillColor = "#3182bd";
+                            else if (kode > 4) fillColor = "#f03b20";
+                            else if (kode > 3) fillColor = "#31a354";
+                            else if (kode > 2) fillColor = "#78c679";
+                            else if (kode > 1) fillColor = "#c2e699";
+                            else if (kode > 0) fillColor = "#ffffcc";
+                            else fillColor = "#f7f7f7"; // No data
+
+                            return {
+                                color: "#999",
+                                weight: 1,
+                                fillColor: fillColor,
+                                fillOpacity: 0.6,
+                            };
+                        },
+                        onEachFeature: function(feature, layer) {
+                            layer.bindPopup(feature.properties.NAME_4);
+                        },
+                    }).addTo(ciputat);
+                });
 
                 // Menyesuaikan layer GeoJSON yang di-load agar sesuai dengan Ciputat Timur
                 $.getJSON("{{ asset('warteg_ciputat.geojson') }}", function(data) {
                     var ratIcon = L.icon({
                         iconUrl: "{{ asset('marker-1.png') }}",
-                        iconSize: [15, 30]
+                        iconSize: [20, 40],
                     });
 
                     L.geoJson(data, {
@@ -362,444 +446,26 @@
 
                             // Gabungkan nama dan gambar dalam satu konten popup
                             var popupContent = `
-                <strong>${feature.properties.Nama_Warteg || 'Nama tidak tersedia'}</strong><br>
-                <img src="${feature.properties.image || '{{ asset('default-image.jpg') }}'}" alt="Warteg Image" style="width:150px;height:auto;">
-            `;
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <h3>${
+                        feature.properties.Nama_Warteg || "Nama tidak tersedia"
+                    }</h3>
+                    <img src="${
+                        feature.properties.image || ""
+                    }" alt="Warteg Image" style="width:150px; height:auto;">
+                    <p>${
+                        feature.properties.Alamat || "Alamat tidak tersedia"
+                    }</p>
+                </div>`;
 
                             marker.bindPopup(popupContent); // Bind popup dengan konten gabungan
                             return marker;
-                        }
-                    }).addTo(warteg);
+                        },
+                    }).addTo(map);
                 });
             </script>
 
 
         </div>
     </section>
-    <!-- ***** Chefs Area Ends ***** -->
-
-    <!-- ***** Reservation Us Area Starts ***** -->
-    <section class="section" id="reservation">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 align-self-center">
-                    <div class="left-text-content">
-                        <div class="section-heading">
-                            <h6>Contact Us</h6>
-                            <h2>Here You Can Make A Reservation Or Just walkin to our cafe</h2>
-                        </div>
-                        <p>Donec pretium est orci, non vulputate arcu hendrerit a. Fusce a eleifend riqsie, namei
-                            sollicitudin urna diam, sed commodo purus porta ut.</p>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="phone">
-                                    <i class="fa fa-phone"></i>
-                                    <h4>Phone Numbers</h4>
-                                    <span><a href="#">080-090-0990</a><br><a href="#">080-090-0880</a></span>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="message">
-                                    <i class="fa fa-envelope"></i>
-                                    <h4>Emails</h4>
-                                    <span><a href="#">hello@company.com</a><br><a
-                                            href="#">info@company.com</a></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="contact-form">
-                        <form id="contact" action="" method="post">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <h4>Table Reservation</h4>
-                                </div>
-                                <div class="col-lg-6 col-sm-12">
-                                    <fieldset>
-                                        <input name="name" type="text" id="name" placeholder="Your Name*"
-                                            required="">
-                                    </fieldset>
-                                </div>
-                                <div class="col-lg-6 col-sm-12">
-                                    <fieldset>
-                                        <input name="email" type="text" id="email" pattern="[^ @]*@[^ @]*"
-                                            placeholder="Your Email Address" required="">
-                                    </fieldset>
-                                </div>
-                                <div class="col-lg-6 col-sm-12">
-                                    <fieldset>
-                                        <input name="phone" type="text" id="phone" placeholder="Phone Number*"
-                                            required="">
-                                    </fieldset>
-                                </div>
-                                <div class="col-md-6 col-sm-12">
-                                    <fieldset>
-                                        <select value="number-guests" name="number-guests" id="number-guests">
-                                            <option value="number-guests">Number Of Guests</option>
-                                            <option name="1" id="1">1</option>
-                                            <option name="2" id="2">2</option>
-                                            <option name="3" id="3">3</option>
-                                            <option name="4" id="4">4</option>
-                                            <option name="5" id="5">5</option>
-                                            <option name="6" id="6">6</option>
-                                            <option name="7" id="7">7</option>
-                                            <option name="8" id="8">8</option>
-                                            <option name="9" id="9">9</option>
-                                            <option name="10" id="10">10</option>
-                                            <option name="11" id="11">11</option>
-                                            <option name="12" id="12">12</option>
-                                        </select>
-                                    </fieldset>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div id="filterDate2">
-                                        <div class="input-group date" data-date-format="dd/mm/yyyy">
-                                            <input name="date" id="date" type="text" class="form-control"
-                                                placeholder="dd/mm/yyyy">
-                                            <div class="input-group-addon">
-                                                <span class="glyphicon glyphicon-th"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-sm-12">
-                                    <fieldset>
-                                        <select value="time" name="time" id="time">
-                                            <option value="time">Time</option>
-                                            <option name="Breakfast" id="Breakfast">Breakfast</option>
-                                            <option name="Lunch" id="Lunch">Lunch</option>
-                                            <option name="Dinner" id="Dinner">Dinner</option>
-                                        </select>
-                                    </fieldset>
-                                </div>
-                                <div class="col-lg-12">
-                                    <fieldset>
-                                        <textarea name="message" rows="6" id="message" placeholder="Message" required=""></textarea>
-                                    </fieldset>
-                                </div>
-                                <div class="col-lg-12">
-                                    <fieldset>
-                                        <button type="submit" id="form-submit" class="main-button-icon">Make A
-                                            Reservation</button>
-                                    </fieldset>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ***** Reservation Area Ends ***** -->
-
-    <!-- ***** Menu Area Starts ***** -->
-    <section class="section" id="offers">
-        <div class="container">
-            <div class="row">
-                <div class="text-center col-lg-4 offset-lg-4">
-                    <div class="section-heading">
-                        <h6>Klassy Week</h6>
-                        <h2>This Week’s Special Meal Offers</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="row" id="tabs">
-                        <div class="col-lg-12">
-                            <div class="heading-tabs">
-                                <div class="row">
-                                    <div class="col-lg-6 offset-lg-3">
-                                        <ul>
-                                            <li><a href='#tabs-1'><img
-                                                        src="{{ asset('template-resto/assets/images/tab-icon-01.png') }}"
-                                                        alt="">Breakfast</a></li>
-                                            <li><a href='#tabs-2'><img
-                                                        src="{{ asset('template-resto/assets/images/tab-icon-02.png') }}"
-                                                        alt="">Lunch</a></li>
-                                            <li><a href='#tabs-3'><img
-                                                        src="{{ asset('template-resto/assets/images/tab-icon-03.png') }}"
-                                                        alt="">Dinner</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <section class='tabs-content'>
-                                <article id='tabs-1'>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="row">
-                                                <div class="left-list">
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-01.png') }}"
-                                                                alt="">
-                                                            <h4>Fresh Chicken Salad</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$10.50</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-02.png') }}"
-                                                                alt="">
-                                                            <h4>Orange Juice</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$8.50</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-03.png') }}"
-                                                                alt="">
-                                                            <h4>Fruit Salad</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$9.90</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="row">
-                                                <div class="right-list">
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-04.png') }}"
-                                                                alt="">
-                                                            <h4>Eggs Omelette</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$6.50</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-05.png') }}"
-                                                                alt="">
-                                                            <h4>Dollma Pire</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$5.00</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-06.png') }}"
-                                                                alt="">
-                                                            <h4>Omelette & Cheese</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$4.10</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </article>
-                                <article id='tabs-2'>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="row">
-                                                <div class="left-list">
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-04.png') }}"
-                                                                alt="">
-                                                            <h4>Eggs Omelette</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$14</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-05.png') }}"
-                                                                alt="">
-                                                            <h4>Dollma Pire</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$18</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-06.png') }}"
-                                                                alt="">
-                                                            <h4>Omelette & Cheese</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$22</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="row">
-                                                <div class="right-list">
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-01.png') }}"
-                                                                alt="">
-                                                            <h4>Fresh Chicken Salad</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$10</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-02.png') }}"
-                                                                alt="">
-                                                            <h4>Orange Juice</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$20</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-03.png') }}"
-                                                                alt="">
-                                                            <h4>Fruit Salad</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$30</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </article>
-                                <article id='tabs-3'>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="row">
-                                                <div class="left-list">
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-05.png') }}"
-                                                                alt="">
-                                                            <h4>Eggs Omelette</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$14</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-03.png') }}"
-                                                                alt="">
-                                                            <h4>Orange Juice</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$18</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-02.png') }}"
-                                                                alt="">
-                                                            <h4>Fruit Salad</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$10</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="row">
-                                                <div class="right-list">
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-06.png') }}"
-                                                                alt="">
-                                                            <h4>Fresh Chicken Salad</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$8.50</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-01.png') }}"
-                                                                alt="">
-                                                            <h4>Dollma Pire</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$9</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <div class="tab-item">
-                                                            <img src="{{ asset('template-resto/assets/images/tab-item-04.png') }}"
-                                                                alt="">
-                                                            <h4>Omelette & Cheese</h4>
-                                                            <p>Lorem ipsum dolor sit amet, consectetur koit adipiscing
-                                                                elit, sed do.</p>
-                                                            <div class="price">
-                                                                <h6>$11</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </article>
-                            </section>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ***** Chefs Area Ends ***** -->
 @endsection

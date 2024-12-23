@@ -8,6 +8,6 @@ class Map extends Controller
 {
     public function index()
     {
-        return view('maps.index');
+        // return view('maps.index');
     }
 }

@@ -1402,6 +1402,13 @@ reservation
     cursor: pointer;
 }
 
+.info.legend {
+    background: white;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
 .contact-form input,
 .contact-form textarea,
 .contact-form select {
@@ -1717,7 +1724,7 @@ responsive
     top: 0;
     bottom: 0;
     position: fixed;
-    z-index: 99999;
+    z-index: 999;
     color: #fff;
 }
 
